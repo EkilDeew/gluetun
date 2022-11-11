@@ -27,6 +27,13 @@ func appendOrDelete(remove bool) string {
 	return "--append"
 }
 
+func insertOrDelete(remove bool) string {
+	if remove {
+		return "--delete"
+	}
+	return "-I"
+}
+
 // flipRule changes an append rule in a delete rule or a delete rule into an
 // append rule.
 func flipRule(rule string) string {
@@ -186,8 +193,8 @@ func (c *Config) acceptIpv6MulticastOutput(ctx context.Context,
 	if intf == "*" { // all interfaces
 		interfaceFlag = ""
 	}
-	instruction := fmt.Sprintf("%s OUTPUT %s -d ff02::1:ff/104 -j ACCEPT",
-		appendOrDelete(remove), interfaceFlag)
+	instruction := fmt.Sprintf("%s OUTPUT %s -d ff02::/64 -j ACCEPT",
+		insertOrDelete(remove), interfaceFlag)
 	return c.runIP6tablesInstruction(ctx, instruction)
 }
 
